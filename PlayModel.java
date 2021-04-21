@@ -30,15 +30,31 @@ public class PlayModel {
     public void calculatePower(Weather condition) {
         switch (condition) {
             case CLEAR:         // No change
-                
+                p1TotalPower = p1MeleePower + p1RangedPower + p1MagicPower;
+                p2TotalPower = p2MeleePower + p2RangedPower + p2MagicPower; 
                 break;
             case ECLIPSE:       // Magic * 2, Melee - 5
+                p1TotalPower = 
+                    (p1MeleePower - 5) + p1RangedPower + (p1MagicPower * 2);
+                p2TotalPower = 
+                    (p2MeleePower - 5) + p2RangedPower + (p2MagicPower * 2); 
                 break;
             case FOG:           // Magic - 10
+                p1TotalPower = 
+                    p1MeleePower + p1RangedPower + (p1MagicPower - 10);
+                p2TotalPower 
+                    = p2MeleePower + p2RangedPower + (p2MagicPower - 10); 
                 break;
             case HEATWAVE:      // Melee - 10
+                p1TotalPower = 
+                    (p1MeleePower - 10) + p1RangedPower + p1MagicPower;
+                p2TotalPower = 
+                    (p2MeleePower - 10) + p2RangedPower + p2MagicPower; 
                 break;
             case NICEBREEZE:    // Melee * 2, Ranged - 5
+                p1TotalPower = 
+                    p1MeleePower + p1RangedPower + p1MagicPower;
+                p2TotalPower = p2MeleePower + p2RangedPower + p2MagicPower; 
                 break;
             case RAIN:          // Ranged * 2, Magic - 5
                 break;
