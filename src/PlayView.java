@@ -38,9 +38,11 @@ public class PlayView extends JFrame {
         p2Hand = new JPanel();
         gameInfo = new JPanel();
         score = new JLabel("0 - 0", JLabel.CENTER);       //TODO Add the scores here
-        score.setFont(new Font("San Serif", Font.PLAIN, 20));
+        score.setFont(new Font("Sans Serif", Font.PLAIN, 20));
         p1Score = new JLabel("p1Score", JLabel.CENTER);
+        p1Score.setFont(new Font("Sans Serif", Font.PLAIN, 24));
         p2Score = new JLabel("p2Score", JLabel.CENTER);
+        p2Score.setFont(new Font("Sans Serif", Font.PLAIN, 24));
 
         // Add some layouts and borders
         getContentPane().setLayout(new GridLayout(0,2));
@@ -60,9 +62,11 @@ public class PlayView extends JFrame {
         p2Ranged.setBorder(BorderFactory.createTitledBorder("Ranged"));
         p2Magic.setLayout(new FlowLayout());
         p2Magic.setBorder(BorderFactory.createTitledBorder("Magic"));
+        p1Hand.setLayout(new FlowLayout());
         p1Hand.setBorder(BorderFactory.createTitledBorder("Hand"));
+        p1Hand.setLayout(new FlowLayout());
         p2Hand.setBorder(BorderFactory.createTitledBorder("Hand"));
-        gameInfo.setLayout(new BoxLayout(gameInfo, BoxLayout.Y_AXIS));
+        gameInfo.setLayout(new GridLayout(3,0));
         gameInfo.setBorder(BorderFactory.createEmptyBorder());
 
         // Add everything
@@ -82,15 +86,13 @@ public class PlayView extends JFrame {
         gameInfo.add(score);
         gameInfo.add(p1Score);
 
-
-
         setVisible(true);
     }
 
 
     public static void main(String[] args) {
+        // From the official Java documentation, sets the app to look more 
         try {
-            // Set cross-platform Java L&F (also called "Metal")
             UIManager.setLookAndFeel(
                 UIManager.getSystemLookAndFeelClassName());
         } 
