@@ -68,7 +68,7 @@ public class TradingCard {
      * @param card
      */
     TradingCard(TradingCard card) {
-        cardIcon = new ImageIcon("res/image/Unknown.jpg");
+        cardIcon = new ImageIcon("res/image/" + name + ".jpg");
         this.power = card.power;
         this.name = card.name;
         this.type = card.type;

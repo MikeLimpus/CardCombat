@@ -5,18 +5,18 @@
  * Handle all of the game calculations and data
  */
 
-import java.util.ArrayList;
 public class PlayModel {
     // Members
     public TCDeck p1Deck = new TCDeck();
     public TCDeck p2Deck = new TCDeck(true);
     public static int p1Score = 0, p2Score = 0;
-    public static final int HAND_SIZE = 5, BOARD_SIZE = 5;
+    public static final int HAND_SIZE = 6, BOARD_SIZE = 5;
     public int p1MeleePower, p1RangedPower, p1MagicPower, p1TotalPower, 
         p2MeleePower, p2RangedPower, p2MagicPower, p2TotalPower;
     private TradingCard[] p1MeleeBoard, p1RangedBoard, p1MagicBoard, p1Hand, 
         p2MeleeBoard, p2RangedBoard, p2MagicBoard, p2Hand; 
     private static boolean initialized = false;
+    private int cpuTracker; 
     /**
      * Weather conditions will affect different card types: 
      * Clear - no change
@@ -30,52 +30,52 @@ public class PlayModel {
     public enum Weather {CLEAR, HEATWAVE, WIND, FOG, ECLIPSE, NICEBREEZE, RAIN};
 
     // Methods
-    public void calculatePower(Weather condition) {
+    public PlayModel() {}
+
+    public int calculatePower(Weather condition, int totalPower, int meleePower,
+         int rangedPower, int magicPower) {
         switch (condition) {
             case CLEAR:         // No change
-                p1TotalPower = p1MeleePower + p1RangedPower + p1MagicPower;
-                p2TotalPower = p2MeleePower + p2RangedPower + p2MagicPower; 
+                totalPower = meleePower + rangedPower + magicPower; 
                 break;
             case ECLIPSE:       // Magic * 2, Melee - 5
-                p1TotalPower = 
-                    (p1MeleePower - 5) + p1RangedPower + (p1MagicPower * 2);
-                p2TotalPower = 
-                    (p2MeleePower - 5) + p2RangedPower + (p2MagicPower * 2); 
+                totalPower = 
+                    (meleePower - 5) + rangedPower + (magicPower * 2);
                 break;
             case FOG:           // Magic - 10
-                p1TotalPower = 
-                    p1MeleePower + p1RangedPower + (p1MagicPower - 10);
-                p2TotalPower 
-                    = p2MeleePower + p2RangedPower + (p2MagicPower - 10); 
+                totalPower = 
+                    meleePower + rangedPower + (magicPower - 10);
                 break;
             case HEATWAVE:      // Melee - 10
-                p1TotalPower = 
-                    (p1MeleePower - 10) + p1RangedPower + p1MagicPower;
-                p2TotalPower = 
-                    (p2MeleePower - 10) + p2RangedPower + p2MagicPower; 
+                totalPower = 
+                    (meleePower - 10) + rangedPower + magicPower;
                 break;
             case NICEBREEZE:    // Melee * 2, Ranged - 5
-                p1TotalPower = 
-                    (p1MeleePower * 2) + (p1RangedPower - 5) + p1MagicPower;
-                p2TotalPower = 
-                    (p2MeleePower * 2) + (p2RangedPower - 5) + p2MagicPower; 
+                totalPower = 
+                    (meleePower * 2) + (rangedPower - 5) + magicPower; 
                 break;
             case RAIN:          // Ranged * 2, Magic - 5
-                p1TotalPower = 
-                    p1MeleePower + (p1RangedPower * 2) + (p1MagicPower - 5);
-                p2TotalPower =
-                    p2MeleePower + (p2RangedPower * 2) + (p2MagicPower - 5);
+                totalPower = 
+                    meleePower + (rangedPower * 2) + (magicPower - 5);
                 break;
             case WIND:          // Ranged - 10
-                p1TotalPower = 
-                    p1MeleePower + (p1RangedPower - 10) + p1MagicPower;
-                p2TotalPower = 
-                    p2MeleePower + (p2RangedPower - 10) + p2MagicPower;
+                totalPower = 
+                    meleePower + (rangedPower - 10) + magicPower;
                 break;
             default:
                 condition = Weather.CLEAR;
                 break;
         }
+        return totalPower;
+    }
+
+    public int calculateRowPower(TradingCard[] row) {
+        int power = 0;
+        for (int i = 0; i < row.length; ++i) {
+            if(row[i] != null)
+                power += row[i].getPower(); 
+        }
+        return power;
     }
 
     /**
@@ -117,11 +117,69 @@ public class PlayModel {
             p1Hand[i] = p1Deck.drawCard();
             p2Hand[i] = p2Deck.drawCard();
         }
-        
-        
 
-
+        cpuTracker = HAND_SIZE;
     }
 
-    
+    public TradingCard playCard(int index) {
+        TradingCard tempCard = new TradingCard(p1Hand[index]);
+        p1Hand[index] = null;
+        return tempCard;
+    }
+
+    /**
+     * The not-so-intelligent "AI" for the computer player. The computer will 
+     * default to playing their top card. Because this game implementation is 
+     * more luck based in the current implementation, this will ultimately be
+     * trivial.  
+     * @return the "rightmost" card in p2Hand
+     */
+    public TradingCard cpuPlay() {
+        TradingCard tempCard = new TradingCard(p2Hand[cpuTracker]);
+        p2Hand[cpuTracker] = null;
+        cpuTracker--;
+        return tempCard;
+    }
+
+    /**
+     * Simulate rolling a ten sided die to decide the weather. Clear weather 
+     * has a 40% chance, the rest have a 10%
+     * @return
+     */
+    public Weather weatherRoll() {
+        int random = (int) (Math.random() * 9);
+        switch (random) {
+            case 0:
+                return Weather.CLEAR;
+            case 1: 
+                return Weather.CLEAR;
+            case 2:
+                return Weather.CLEAR;
+            case 3:
+                return Weather.CLEAR;
+            case 4: 
+                return Weather.ECLIPSE;
+            case 5:
+                return Weather.FOG;
+            case 6:
+                return Weather.HEATWAVE;
+            case 7:
+                return Weather.NICEBREEZE;
+            case 8:
+                return Weather.RAIN;
+            case 9: 
+                return Weather.WIND;
+            default:        // We should never get here, but just in case
+                return Weather.CLEAR;
+        } 
+    }
+
+
+    public TradingCard[] getP1Hand() {
+        return p1Hand;
+    }
+
+    public TradingCard[] getP2Hand() {
+        return p2Hand;
+    }
 }

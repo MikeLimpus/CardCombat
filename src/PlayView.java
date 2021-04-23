@@ -5,12 +5,14 @@
  * Creates the swing window and elements of the game board
  */
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.*;
 
 public class PlayView extends JFrame {
     // Members
-    private static final String PROGRAM_NAME = "Card Combat";
     public JPanel leftPanel, rightPanel; 
+    private static final String PROGRAM_NAME = "Card Combat";
     // Right side panels
     public JPanel p1Melee, p1Ranged, p1Magic, 
         p2Melee, p2Ranged, p2Magic, weatherPanel;
@@ -19,8 +21,8 @@ public class PlayView extends JFrame {
     public JLabel p1Score, p2Score, p1Power, p2Power, weatherLabel, weatherDsc;
     public JLabel[] hand1, hand2;
 
-    public PlayView(String title) {
-        super(title);
+    public PlayView() {
+        super(PROGRAM_NAME);
         this.setSize(1280, 1024);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -46,6 +48,30 @@ public class PlayView extends JFrame {
         weatherDsc = new JLabel("Weather info here", JLabel.CENTER);
         hand1 = new JLabel[5];
         hand2 = new JLabel[5];
+
+        // Create the mouse listeners
+        for(int i = 0; i < PlayModel.HAND_SIZE; ++i) {
+            hand1[i].addMouseListener(new MouseListener() {
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    PlayController.clicked(e.getComponent());    
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {}
+
+                @Override
+                public void mouseReleased(MouseEvent e) {}
+
+                @Override
+                public void mouseEntered(MouseEvent e) {}
+
+                @Override
+                public void mouseExited(MouseEvent e) {}
+                
+            });
+        }
 
 
         // Add some layouts and borders
@@ -148,7 +174,16 @@ public class PlayView extends JFrame {
     public void setLabelText(JLabel label, String str) {
         label.setText(str);
     }
+
+    public void addCardtoHand(TradingCard card) {
+        p1Hand.add(new JLabel(card.getIcon()));
+    }
     
+    public void fillCPUHand() {
+        for(int i = 0; i < PlayModel.HAND_SIZE; ++i) {
+            p2Hand.add(new JLabel("res/image/Unknown.jpg"));
+        }
+    }
 
     public static void main(String[] args) {
         // From the official Java documentation, sets the app to look more 
@@ -172,6 +207,6 @@ public class PlayView extends JFrame {
            // handle exception
            e.printStackTrace();
         }
-        PlayView view = new PlayView(PROGRAM_NAME);
+        PlayView view = new PlayView();
     }
 }
