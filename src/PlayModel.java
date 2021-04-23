@@ -1,4 +1,3 @@
-package src;
 /**
  * Mike Limpus
  * CST 338 Final Project

@@ -15,7 +15,7 @@ MELEE
 Samurai
 MELEE
 6
-Knight 
+Knight
 MELEE
 7
 Rock Troll
@@ -24,7 +24,7 @@ MELEE
 Holy Paladin
 MELEE
 9
-Black Knight 
+Black Knight
 MELEE
 10
 Ice Giant

@@ -1,4 +1,4 @@
-package src;
+import javax.swing.ImageIcon;
 
 /**
  * Mike Limpus
@@ -7,7 +7,7 @@ package src;
  * Represent the data of a trading card object in the game 
  */
 
-public class TradingCard {
+public class TradingCard extends ImageIcon {
     // Members
     public enum CardType {MELEE, RANGED, MAGIC, DEBUG};
     private int power; 
@@ -32,6 +32,7 @@ public class TradingCard {
      * @param type
      */
     TradingCard(int power, String name, CardType type) {
+        super("res/image/" + name + ".jpg");
         this.power = power;
         this.name = name;
         this.type = type;

@@ -1,5 +1,3 @@
-package src;
-
 /**
  * Mike Limpus
  * CST 338 Final Project
@@ -19,11 +17,13 @@ public class PlayView extends JFrame {
     // Left side panels
     public JPanel p1Hand, p2Hand, gameInfo;
     public JLabel score, p1Score, p2Score;
+    public JLabel[] hand1, hand2;
 
     public PlayView(String title) {
         super(title);
         this.setSize(1280, 720);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
         // Initialize the Jpanel and Jlabel objects
         leftPanel = new JPanel();
         rightPanel = new JPanel();
@@ -43,6 +43,9 @@ public class PlayView extends JFrame {
         p1Score.setFont(new Font("Sans Serif", Font.PLAIN, 24));
         p2Score = new JLabel("p2Score", JLabel.CENTER);
         p2Score.setFont(new Font("Sans Serif", Font.PLAIN, 24));
+        hand1 = new JLabel[1];
+        TradingCard test = new TradingCard(1, "Goblin Creep", "Melee");
+        hand1[0] = new JLabel(test);
 
         // Add some layouts and borders
         getContentPane().setLayout(new GridLayout(0,2));
@@ -85,6 +88,8 @@ public class PlayView extends JFrame {
         gameInfo.add(p2Score);
         gameInfo.add(score);
         gameInfo.add(p1Score);
+        p1Hand.add(hand1[0]);
+        p1Melee.add(hand1[0]);
 
         setVisible(true);
     }
