@@ -119,6 +119,7 @@ public class PlayModel {
         }
 
         cpuTracker = HAND_SIZE;
+        resetPower();
     }
 
     public TradingCard playCard(int index) {
@@ -174,6 +175,26 @@ public class PlayModel {
         } 
     }
 
+    public void resetPower() {
+        p1TotalPower = 0;
+        p2TotalPower = 0;
+    }
+
+    public int getP1Power() {
+        return p1TotalPower;
+    }
+
+    public int getP2Power() {
+        return p2TotalPower;
+    }
+
+    public int getP1Score() {
+        return p1Score;
+    }
+
+    public int getP2Score() {
+        return p2Score;
+    }
 
     public TradingCard[] getP1Hand() {
         return p1Hand;

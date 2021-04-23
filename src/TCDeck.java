@@ -40,7 +40,7 @@ public class TCDeck {
      * Using the included CardList.txt, fill the arraylist cardList with each of
      * the created cardTypes
      */
-    public static void createCards() {
+    public void createCards() {
         try {
             File file = new File("res/CardList.txt");
             Scanner scanner = new Scanner(file);

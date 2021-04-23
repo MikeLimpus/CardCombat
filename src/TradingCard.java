@@ -14,6 +14,7 @@ public class TradingCard {
     private String name;  
     private CardType type; 
     private ImageIcon cardIcon;  
+    private int posInHand = 0;
 
     // Methods
 
@@ -101,6 +102,13 @@ public class TradingCard {
         return cardIcon;
     }
 
+    public int getPosInHand() {
+        return posInHand;
+    }
+
+    public void setPosInHand(int pos) {
+        posInHand = pos;
+    }
     public void print() {
         System.out.println(name + " " + type + " " + power);
     }

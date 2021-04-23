@@ -5,8 +5,6 @@
  * Creates the swing window and elements of the game board
  */
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.*;
 
 public class PlayView extends JFrame {
@@ -20,6 +18,7 @@ public class PlayView extends JFrame {
     public JPanel p1Hand, p2Hand, gameInfo, score;
     public JLabel p1Score, p2Score, p1Power, p2Power, weatherLabel, weatherDsc;
     public JLabel[] hand1, hand2;
+    
 
     public PlayView() {
         super(PROGRAM_NAME);
@@ -46,32 +45,12 @@ public class PlayView extends JFrame {
         p2Power = new JLabel("Player 2 Power", JLabel.CENTER);
         weatherLabel = new JLabel("Weather", JLabel.CENTER);
         weatherDsc = new JLabel("Weather info here", JLabel.CENTER);
-        hand1 = new JLabel[5];
-        hand2 = new JLabel[5];
-
-        // Create the mouse listeners
-        for(int i = 0; i < PlayModel.HAND_SIZE; ++i) {
-            hand1[i].addMouseListener(new MouseListener() {
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    PlayController.clicked(e.getComponent());    
-                }
-
-                @Override
-                public void mousePressed(MouseEvent e) {}
-
-                @Override
-                public void mouseReleased(MouseEvent e) {}
-
-                @Override
-                public void mouseEntered(MouseEvent e) {}
-
-                @Override
-                public void mouseExited(MouseEvent e) {}
-                
-            });
-        }
+        hand1 = new JLabel[PlayModel.HAND_SIZE];
+        hand2 = new JLabel[PlayModel.HAND_SIZE];
+        for (int i = 0; i < PlayModel.HAND_SIZE; ++i) {
+            hand1[i] = new JLabel();
+            hand2[i] = new JLabel();
+        } 
 
 
         // Add some layouts and borders
@@ -92,9 +71,9 @@ public class PlayView extends JFrame {
         p2Ranged.setBorder(BorderFactory.createTitledBorder("Ranged"));
         p2Magic.setLayout(new FlowLayout());
         p2Magic.setBorder(BorderFactory.createTitledBorder("Magic"));
-        p1Hand.setLayout(new FlowLayout());
+        p1Hand.setLayout(new FlowLayout(PlayModel.HAND_SIZE));
         p1Hand.setBorder(BorderFactory.createTitledBorder("Hand"));
-        p1Hand.setLayout(new FlowLayout());
+        p1Hand.setLayout(new FlowLayout(PlayModel.HAND_SIZE));
         p2Hand.setBorder(BorderFactory.createTitledBorder("Hand"));
         gameInfo.setLayout(new GridLayout(3,0));
         gameInfo.setBorder(BorderFactory.createEmptyBorder());
@@ -128,6 +107,11 @@ public class PlayView extends JFrame {
         gameInfo.add(p2Power);
         gameInfo.add(score);
         gameInfo.add(p1Power);
+        for (int i = 0; i < PlayModel.HAND_SIZE; ++i) {
+            p1Hand.add(hand1[i]);
+            p2Hand.add(hand2[i]);
+        } 
+        
         setVisible(true);
     }
 
@@ -175,15 +159,54 @@ public class PlayView extends JFrame {
         label.setText(str);
     }
 
-    public void addCardtoHand(TradingCard card) {
-        p1Hand.add(new JLabel(card.getIcon()));
+    public void setPower(int player1, int player2) { 
+        p1Power.setText(Integer.toString(player1));
+        p2Power.setText(Integer.toString(player2)); 
+    }
+
+    public void setScore(int player1, int player2) {
+        p1Score.setText(Integer.toString(player1));
+        p2Score.setText(Integer.toString(player2));
+    }
+
+    public void addCardtoHand(TradingCard card, int index) {
+        hand1[index].setIcon(card.getIcon());
     }
     
     public void fillCPUHand() {
         for(int i = 0; i < PlayModel.HAND_SIZE; ++i) {
-            p2Hand.add(new JLabel("res/image/Unknown.jpg"));
+            hand2[i].setIcon(new ImageIcon("res/image/Unknown.jpg"));
         }
     }
+
+    public void playCard(TradingCard card, boolean isPlayer) {
+        switch (card.getType()) {
+        case DEBUG:
+            break;
+        case MAGIC:
+            if (isPlayer)
+                p1Magic.add(new JLabel(card.getIcon()));
+            else 
+                p2Magic.add(new JLabel(card.getIcon()));
+            break;
+        case MELEE:
+            if (isPlayer)
+                p1Melee.add(new JLabel(card.getIcon()));
+            else 
+                p2Melee.add(new JLabel(card.getIcon()));
+            break;
+        case RANGED:
+            if (isPlayer)
+                p1Ranged.add(new JLabel(card.getIcon()));
+            else 
+                p2Ranged.add(new JLabel(card.getIcon()));
+            break;
+        default:
+            break;
+
+        }
+    }
+
 
     public static void main(String[] args) {
         // From the official Java documentation, sets the app to look more 
@@ -191,22 +214,12 @@ public class PlayView extends JFrame {
             UIManager.setLookAndFeel(
                 UIManager.getSystemLookAndFeelClassName());
         } 
-        catch (UnsupportedLookAndFeelException e) {
-           // handle exception
+        catch (UnsupportedLookAndFeelException | ClassNotFoundException | 
+            InstantiationException | IllegalAccessException e) {
            e.printStackTrace();
         }
-        catch (ClassNotFoundException e) {
-           // handle exception
-           e.printStackTrace();
-        }
-        catch (InstantiationException e) {
-           // handle exception
-           e.printStackTrace();
-        }
-        catch (IllegalAccessException e) {
-           // handle exception
-           e.printStackTrace();
-        }
+
         PlayView view = new PlayView();
+        view.fillCPUHand();
     }
 }
