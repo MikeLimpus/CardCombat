@@ -7,12 +7,13 @@ import javax.swing.ImageIcon;
  * Represent the data of a trading card object in the game 
  */
 
-public class TradingCard extends ImageIcon {
+public class TradingCard {
     // Members
     public enum CardType {MELEE, RANGED, MAGIC, DEBUG};
     private int power; 
     private String name;  
-    private CardType type;   
+    private CardType type; 
+    private ImageIcon cardIcon;  
 
     // Methods
 
@@ -32,7 +33,7 @@ public class TradingCard extends ImageIcon {
      * @param type
      */
     TradingCard(int power, String name, CardType type) {
-        super("res/image/" + name + ".jpg");
+        cardIcon = new ImageIcon("res/image/" + name + ".jpg");
         this.power = power;
         this.name = name;
         this.type = type;
@@ -45,6 +46,7 @@ public class TradingCard extends ImageIcon {
      * @param type
      */
     TradingCard(int power, String name, String type) {
+        cardIcon = new ImageIcon("res/image/" + name + ".jpg");
         this.power = power; 
         this.name = name; 
         if (type.contains("MELEE")) {
@@ -66,6 +68,7 @@ public class TradingCard extends ImageIcon {
      * @param card
      */
     TradingCard(TradingCard card) {
+        cardIcon = new ImageIcon("res/image/Unknown.jpg");
         this.power = card.power;
         this.name = card.name;
         this.type = card.type;
@@ -92,6 +95,10 @@ public class TradingCard extends ImageIcon {
      */
     public CardType getType() { 
         return type;
+    }
+
+    public ImageIcon getIcon() {
+        return cardIcon;
     }
 
     public void print() {

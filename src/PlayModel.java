@@ -8,12 +8,15 @@
 import java.util.ArrayList;
 public class PlayModel {
     // Members
-    public TCDeck playerDeck = new TCDeck();
-    public TCDeck cpuDeck = new TCDeck(true);
-    public static int player1Score = 0;
-    public static int player2Score = 0; 
+    public TCDeck p1Deck = new TCDeck();
+    public TCDeck p2Deck = new TCDeck(true);
+    public static int p1Score = 0, p2Score = 0;
+    public static final int HAND_SIZE = 5, BOARD_SIZE = 5;
     public int p1MeleePower, p1RangedPower, p1MagicPower, p1TotalPower, 
         p2MeleePower, p2RangedPower, p2MagicPower, p2TotalPower;
+    private TradingCard[] p1MeleeBoard, p1RangedBoard, p1MagicBoard, p1Hand, 
+        p2MeleeBoard, p2RangedBoard, p2MagicBoard, p2Hand; 
+    private static boolean initialized = false;
     /**
      * Weather conditions will affect different card types: 
      * Clear - no change
@@ -70,7 +73,55 @@ public class PlayModel {
                     p2MeleePower + (p2RangedPower - 10) + p2MagicPower;
                 break;
             default:
+                condition = Weather.CLEAR;
                 break;
         }
     }
+
+    /**
+     * Allocate memory for the arrays, shuffle the decks
+     */
+    public void initializeGame() {
+        p1MeleeBoard = new TradingCard[BOARD_SIZE];
+        p1RangedBoard = new TradingCard[BOARD_SIZE];
+        p1MagicBoard = new TradingCard[BOARD_SIZE];
+        p1Hand = new TradingCard[HAND_SIZE];
+        p2MeleeBoard = new TradingCard[BOARD_SIZE];
+        p2RangedBoard = new TradingCard[BOARD_SIZE];
+        p2MagicBoard = new TradingCard[BOARD_SIZE];
+        p2Hand = new TradingCard[HAND_SIZE]; 
+
+        p1Deck.shuffle();
+        p2Deck.shuffle();
+
+    }
+
+    public void roundStart() {
+        // Initialize the board on the first round
+        if (!initialized) {
+            initializeGame();
+        }
+        // 'Discard the board' by resetting the arrays
+        else {
+            for (int i = 0; i < BOARD_SIZE; ++i) {
+                p1MeleeBoard[i] = null;
+                p1RangedBoard[i] = null;
+                p1MagicBoard[i] = null;
+                p2MeleeBoard[i] = null;
+                p2RangedBoard[i] = null;
+                p2MagicBoard[i] = null;
+            }
+        }
+        // Draw cards
+        for(int i = 0; i < HAND_SIZE; ++i) {
+            p1Hand[i] = p1Deck.drawCard();
+            p2Hand[i] = p2Deck.drawCard();
+        }
+        
+        
+
+
+    }
+
+    
 }

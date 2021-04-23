@@ -9,7 +9,7 @@ public class TCDeck {
     private ArrayList<TradingCard> deck = new ArrayList<>();
     private static ArrayList<TradingCard> cardList = new ArrayList<>();
     private static final int DECK_SIZE = 30;
-    private static boolean initialized = false;
+    private boolean initialized = false;
 
     // Methods
 
@@ -20,7 +20,7 @@ public class TCDeck {
     public TCDeck() {
         if (!initialized)
             createCards();
-        randomDeck();
+        defaultDeck();
     }
 
     /**
@@ -89,7 +89,7 @@ public class TCDeck {
      * Remove the top card of the deck and return it to be played
      * @return TradingCard that was removed from the deck
      */
-    public TradingCard playCard() {
+    public TradingCard drawCard() {
         return deck.remove(0);
     }
     public static void main(String[] args) {
