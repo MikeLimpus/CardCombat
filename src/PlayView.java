@@ -17,7 +17,7 @@ public class PlayView extends JFrame {
     // Left side panels
     public JPanel p1Hand, p2Hand, gameInfo, score;
     public JLabel p1Score, p2Score, p1Power, p2Power, weatherLabel, weatherDsc;
-    public JLabel[] hand1, hand2;
+    
     
 
     public PlayView() {
@@ -45,12 +45,11 @@ public class PlayView extends JFrame {
         p2Power = new JLabel("Player 2 Power", JLabel.CENTER);
         weatherLabel = new JLabel("Weather", JLabel.CENTER);
         weatherDsc = new JLabel("Weather info here", JLabel.CENTER);
-        hand1 = new JLabel[PlayModel.HAND_SIZE];
-        hand2 = new JLabel[PlayModel.HAND_SIZE];
-        for (int i = 0; i < PlayModel.HAND_SIZE; ++i) {
-            hand1[i] = new JLabel();
-            hand2[i] = new JLabel();
-        } 
+  
+        // for (int i = 0; i < PlayModel.HAND_SIZE; ++i) {
+        //     hand1[i] = new TradingCard();
+        //     hand2[i] = new TradingCard();
+        // } 
 
 
         // Add some layouts and borders
@@ -107,10 +106,7 @@ public class PlayView extends JFrame {
         gameInfo.add(p2Power);
         gameInfo.add(score);
         gameInfo.add(p1Power);
-        for (int i = 0; i < PlayModel.HAND_SIZE; ++i) {
-            p1Hand.add(hand1[i]);
-            p2Hand.add(hand2[i]);
-        } 
+ 
         
         setVisible(true);
     }
@@ -170,7 +166,7 @@ public class PlayView extends JFrame {
     }
 
     public void addCardtoHand(TradingCard card, int index) {
-        hand1[index].setIcon(card.getIcon());
+        hand1[index].setIcon(hand1[index].getIcon());
     }
     
     public void fillCPUHand() {
@@ -185,21 +181,21 @@ public class PlayView extends JFrame {
             break;
         case MAGIC:
             if (isPlayer)
-                p1Magic.add(new JLabel(card.getIcon()));
+                p1Magic.add(card);
             else 
-                p2Magic.add(new JLabel(card.getIcon()));
+                p2Magic.add(card);
             break;
         case MELEE:
             if (isPlayer)
-                p1Melee.add(new JLabel(card.getIcon()));
+                p1Melee.add(card);
             else 
-                p2Melee.add(new JLabel(card.getIcon()));
+                p2Melee.add(card);
             break;
         case RANGED:
             if (isPlayer)
-                p1Ranged.add(new JLabel(card.getIcon()));
+                p1Ranged.add(card);
             else 
-                p2Ranged.add(new JLabel(card.getIcon()));
+                p2Ranged.add(card);
             break;
         default:
             break;

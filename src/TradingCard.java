@@ -1,4 +1,4 @@
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 /**
  * Mike Limpus
@@ -7,7 +7,7 @@ import javax.swing.ImageIcon;
  * Represent the data of a trading card object in the game 
  */
 
-public class TradingCard {
+public class TradingCard extends JLabel {
     // Members
     public enum CardType {MELEE, RANGED, MAGIC, DEBUG};
     private int power; 
@@ -22,6 +22,7 @@ public class TradingCard {
      * Default constructor creates a useless card
      */
     TradingCard() {
+        super();
         power = 0; 
         name = "Default Card";
         type = CardType.DEBUG;
@@ -34,7 +35,7 @@ public class TradingCard {
      * @param type
      */
     TradingCard(int power, String name, CardType type) {
-        cardIcon = new ImageIcon("res/image/" + name + ".jpg");
+        super(new ImageIcon("res/image/" + name + ".jpg"));
         this.power = power;
         this.name = name;
         this.type = type;
@@ -47,7 +48,7 @@ public class TradingCard {
      * @param type
      */
     TradingCard(int power, String name, String type) {
-        cardIcon = new ImageIcon("res/image/" + name + ".jpg");
+        super(new ImageIcon("res/image/" + name + ".jpg"));
         this.power = power; 
         this.name = name; 
         if (type.contains("MELEE")) {
@@ -69,7 +70,7 @@ public class TradingCard {
      * @param card
      */
     TradingCard(TradingCard card) {
-        cardIcon = new ImageIcon("res/image/" + name + ".jpg");
+        super(new ImageIcon("res/image/" + card.name + ".jpg"));
         this.power = card.power;
         this.name = card.name;
         this.type = card.type;
@@ -109,6 +110,11 @@ public class TradingCard {
     public void setPosInHand(int pos) {
         posInHand = pos;
     }
+
+    @Override
+    public void setIcon(Icon icon) {
+        cardIcon = (ImageIcon) icon;
+    } 
     public void print() {
         System.out.println(name + " " + type + " " + power);
     }
