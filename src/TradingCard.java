@@ -1,10 +1,10 @@
 import javax.swing.*;
-
 /**
  * Mike Limpus
  * CST 338 Final Project
  * TradingCard.java
- * Represent the data of a trading card object in the game 
+ * Represent the data of a trading card object in the game, as well as 
+ * act as the graphical object of a card
  */
 
 public class TradingCard extends JLabel {
@@ -12,9 +12,7 @@ public class TradingCard extends JLabel {
     public enum CardType {MELEE, RANGED, MAGIC, DEBUG};
     private int power; 
     private String name;  
-    private CardType type; 
-    private ImageIcon cardIcon;  
-    private int posInHand = 0;
+    private CardType type;  
 
     // Methods
 
@@ -22,7 +20,7 @@ public class TradingCard extends JLabel {
      * Default constructor creates a useless card
      */
     TradingCard() {
-        super();
+        super(new ImageIcon("res/image/Empty.jpg"));
         power = 0; 
         name = "Default Card";
         type = CardType.DEBUG;
@@ -99,22 +97,9 @@ public class TradingCard extends JLabel {
         return type;
     }
 
-    public ImageIcon getIcon() {
-        return cardIcon;
-    }
-
-    public int getPosInHand() {
-        return posInHand;
-    }
-
-    public void setPosInHand(int pos) {
-        posInHand = pos;
-    }
-
-    @Override
-    public void setIcon(Icon icon) {
-        cardIcon = (ImageIcon) icon;
-    } 
+    /**
+     * Debug print function
+     */
     public void print() {
         System.out.println(name + " " + type + " " + power);
     }

@@ -1,3 +1,11 @@
+/**
+ * Mike Limpus
+ * CST 338 Final Project
+ * TCGDriver.java
+ * Main program entry point, sets the look and feel of the application 
+ * to be "Native" to the operating system
+ */
+
 import javax.swing.*;
 
 public class TCGDriver {

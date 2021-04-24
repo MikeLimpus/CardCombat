@@ -8,7 +8,7 @@ public class TCDeck {
     // Members
     private ArrayList<TradingCard> deck = new ArrayList<>();
     private static ArrayList<TradingCard> cardList = new ArrayList<>();
-    private static final int DECK_SIZE = 30;
+    private static final int DECK_SIZE = 60;
     private boolean initialized = false;
 
     // Methods
@@ -92,6 +92,8 @@ public class TCDeck {
     public TradingCard drawCard() {
         return deck.remove(0);
     }
+
+    // DEBUG Main method, not main program entry point
     public static void main(String[] args) {
         TCDeck test = new TCDeck(false);
         TCDeck test2 = new TCDeck(true);

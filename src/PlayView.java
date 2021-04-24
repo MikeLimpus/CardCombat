@@ -1,8 +1,9 @@
 /**
  * Mike Limpus
  * CST 338 Final Project
- * Play
- * Creates the swing window and elements of the game board
+ * PlayView.java
+ * Creates the swing window and elements of the game board, as well as provide
+ * methods that directly modify the window.
  */
 import java.awt.*;
 import javax.swing.*;
@@ -17,6 +18,8 @@ public class PlayView extends JFrame {
     // Left side panels
     public JPanel p1Hand, p2Hand, gameInfo, score;
     public JLabel p1Score, p2Score, p1Power, p2Power, weatherLabel, weatherDsc;
+    // Array for the "card backs" that the opponent will have
+    public JLabel[] opponentCards;
     
     
 
@@ -39,20 +42,16 @@ public class PlayView extends JFrame {
         p2Hand = new JPanel();
         gameInfo = new JPanel();
         score = new JPanel();
-        p1Score = new JLabel("Player 1 Score", JLabel.RIGHT);       //TODO Add the scores here
+        // The following default messages will be replaced by the controller
+        p1Score = new JLabel("Player 1 Score", JLabel.RIGHT);       
         p2Score = new JLabel("Player 2 Score", JLabel.LEFT);
         p1Power = new JLabel("Player 1 Power", JLabel.CENTER);
         p2Power = new JLabel("Player 2 Power", JLabel.CENTER);
         weatherLabel = new JLabel("Weather", JLabel.CENTER);
         weatherDsc = new JLabel("Weather info here", JLabel.CENTER);
-  
-        // for (int i = 0; i < PlayModel.HAND_SIZE; ++i) {
-        //     hand1[i] = new TradingCard();
-        //     hand2[i] = new TradingCard();
-        // } 
+        opponentCards = new JLabel[PlayModel.HAND_SIZE];
 
-
-        // Add some layouts and borders
+        // Add some layouts and borders, as well as some styles
         getContentPane().setLayout(new GridLayout(0,2));
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setBorder(BorderFactory.createEmptyBorder());
@@ -72,12 +71,12 @@ public class PlayView extends JFrame {
         p2Magic.setBorder(BorderFactory.createTitledBorder("Magic"));
         p1Hand.setLayout(new FlowLayout(PlayModel.HAND_SIZE));
         p1Hand.setBorder(BorderFactory.createTitledBorder("Hand"));
-        p1Hand.setLayout(new FlowLayout(PlayModel.HAND_SIZE));
+        p2Hand.setLayout(new FlowLayout(PlayModel.HAND_SIZE));
         p2Hand.setBorder(BorderFactory.createTitledBorder("Hand"));
         gameInfo.setLayout(new GridLayout(3,0));
         gameInfo.setBorder(BorderFactory.createEmptyBorder());
         weatherPanel.setLayout(new GridLayout(2,0));
-        score.setLayout(new GridLayout(0,3));
+        score.setLayout(new GridLayout(0,5));
         p1Score.setFont(new Font("Sans Serif", Font.PLAIN, 20));
         p2Score.setFont(new Font("Sans Serif", Font.PLAIN, 20));
         p1Power.setFont(new Font("Sans Serif", Font.PLAIN, 24));
@@ -90,9 +89,11 @@ public class PlayView extends JFrame {
         leftPanel.add(p2Hand);
         leftPanel.add(gameInfo);
         gameInfo.add(score);
+        score.add(new JLabel("Your Score", JLabel.CENTER));
         score.add(p1Score);
         score.add (new JLabel("-", JLabel.CENTER));
         score.add(p2Score);
+        score.add(new JLabel("Opponent Score", JLabel.CENTER));
         leftPanel.add(p1Hand);
         rightPanel.add(p2Magic);
         rightPanel.add(p2Ranged);
@@ -106,11 +107,14 @@ public class PlayView extends JFrame {
         gameInfo.add(p2Power);
         gameInfo.add(score);
         gameInfo.add(p1Power);
- 
-        
         setVisible(true);
     }
 
+    /**
+     * Display the Weather conditions on the window, something of a "cousin" to 
+     * PlayModel.calculatePower() for the graphical end.
+     * @param condition
+     */
     public void setWeather(PlayModel.Weather condition) {
         switch(condition) {
         case CLEAR:
@@ -133,7 +137,7 @@ public class PlayView extends JFrame {
         case NICEBREEZE:
             weatherLabel.setText("Nice Breeze");
             weatherDsc.setText("The nice breeze cools your warriors but makes" +
-                "arrows miss their mark");
+                " arrows miss their mark");
             break;
         case RAIN:
             weatherLabel.setText("Rain");
@@ -151,71 +155,114 @@ public class PlayView extends JFrame {
         }
     }
 
+    /**
+     * Allows for direct modification of label text if needed.
+     * @param label
+     * @param str
+     */
     public void setLabelText(JLabel label, String str) {
         label.setText(str);
     }
 
+    /**
+     * Allaws the controller to pass the Model's power to the View's labels.
+     * @param player1
+     * @param player2
+     */
     public void setPower(int player1, int player2) { 
         p1Power.setText(Integer.toString(player1));
         p2Power.setText(Integer.toString(player2)); 
     }
 
+    /**
+     * Allaws the controller to pass the Model's score to the View's labels.
+     * @param player1
+     * @param player2
+     */
     public void setScore(int player1, int player2) {
         p1Score.setText(Integer.toString(player1));
         p2Score.setText(Integer.toString(player2));
     }
 
-    public void addCardtoHand(TradingCard card, int index) {
-        hand1[index].setIcon(hand1[index].getIcon());
-    }
-    
+    /**
+     * Pack the opponent's hand Panel with icons to represent actual TradingCard
+     * objects that the player cannot see.
+     */
     public void fillCPUHand() {
+        p2Hand.removeAll();
         for(int i = 0; i < PlayModel.HAND_SIZE; ++i) {
-            hand2[i].setIcon(new ImageIcon("res/image/Unknown.jpg"));
+            opponentCards[i] = 
+                new JLabel(new ImageIcon("res/image/Unknown.jpg"));
+            p2Hand.add(opponentCards[i]);
         }
     }
 
-    public void playCard(TradingCard card, boolean isPlayer) {
-        switch (card.getType()) {
-        case DEBUG:
-            break;
-        case MAGIC:
-            if (isPlayer)
-                p1Magic.add(card);
-            else 
-                p2Magic.add(card);
-            break;
-        case MELEE:
-            if (isPlayer)
-                p1Melee.add(card);
-            else 
-                p2Melee.add(card);
-            break;
-        case RANGED:
-            if (isPlayer)
-                p1Ranged.add(card);
-            else 
-                p2Ranged.add(card);
-            break;
-        default:
-            break;
-
-        }
+    /**
+     * Allows the controller to resent the play area for a new round.
+     */
+    public void clearBoard() {
+        p1Melee.removeAll();
+        p1Ranged.removeAll();
+        p1Magic.removeAll();
+        p2Melee.removeAll();
+        p2Ranged.removeAll();
+        p2Magic.removeAll();
     }
 
 
+    /**
+     * Displays the text "You Win!" if the controller determines the user won.
+     */
+    public void winScreen() {
+        p1Hand.removeAll();
+        JLabel win = new JLabel("You Won!", JLabel.CENTER);
+        win.setFont(new Font("Serif", Font.BOLD, 50));
+        win.setBackground(Color.GREEN);
+        p1Hand.add(win);
+    }
+
+    /**
+     * Displays the text "You Lose :(" 
+     * if the controller determines the user lost.
+     */
+    public void loseScreen() {
+        p1Hand.removeAll();
+        JLabel lose = new JLabel("You Lost :(", JLabel.CENTER);
+        lose.setFont(new Font("Serif", Font.BOLD, 50));
+        lose.setBackground(Color.RED);
+        p1Hand.add(lose);
+    }
+
+
+    /**
+     * This main method only exists to test layout changes, and is not the main
+     * entry point. Running it will display an empty window with placeholder
+     * labels.
+     * @param args
+     */
     public static void main(String[] args) {
-        // From the official Java documentation, sets the app to look more 
+        // From the official Java documentation, sets the app to look more
+        // 'native'
         try {
             UIManager.setLookAndFeel(
                 UIManager.getSystemLookAndFeelClassName());
         } 
-        catch (UnsupportedLookAndFeelException | ClassNotFoundException | 
-            InstantiationException | IllegalAccessException e) {
+        catch (UnsupportedLookAndFeelException e) {
+           // handle exception
            e.printStackTrace();
         }
-
+        catch (ClassNotFoundException e) {
+           // handle exception
+           e.printStackTrace();
+        }
+        catch (InstantiationException e) {
+           // handle exception
+           e.printStackTrace();
+        }
+        catch (IllegalAccessException e) {
+           // handle exception
+           e.printStackTrace();
+        }
         PlayView view = new PlayView();
-        view.fillCPUHand();
     }
 }

@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Mike Limpus
  * CST 338 Final Project
@@ -13,10 +15,16 @@ public class PlayModel {
     public static final int HAND_SIZE = 6, BOARD_SIZE = 5;
     public int p1MeleePower, p1RangedPower, p1MagicPower, p1TotalPower, 
         p2MeleePower, p2RangedPower, p2MagicPower, p2TotalPower;
-    private TradingCard[] p1MeleeBoard, p1RangedBoard, p1MagicBoard, p1Hand, 
-        p2MeleeBoard, p2RangedBoard, p2MagicBoard, p2Hand; 
+    public TradingCard[] p1Hand, p2Hand; 
+    public ArrayList<TradingCard> p1MeleeBoard = new ArrayList<>();
+    public ArrayList<TradingCard> p1RangedBoard = new ArrayList<>();
+    public ArrayList<TradingCard> p1MagicBoard = new ArrayList<>();
+    public ArrayList<TradingCard> p2MeleeBoard = new ArrayList<>();
+    public ArrayList<TradingCard> p2RangedBoard = new ArrayList<>();
+    public ArrayList<TradingCard> p2MagicBoard = new ArrayList<>();
+
     private static boolean initialized = false;
-    private int cpuTracker; 
+    private static int cpuTracker; 
     /**
      * Weather conditions will affect different card types: 
      * Clear - no change
@@ -32,35 +40,53 @@ public class PlayModel {
     // Methods
     public PlayModel() {}
 
-    public int calculatePower(Weather condition, int totalPower, int meleePower,
-         int rangedPower, int magicPower) {
+    /**
+     * The main game calculation, determines the entire power of any players'
+     * side of the board based on the current weather condition, using the 3
+     * rows calculated with calculateRowPower. Through the use of int 
+     * typecasting and intentionally vague user messages, the true calcaulations
+     * will be intentionally somewhat obfuscated from the player. Only multiply/
+     * divide are used to make power buffs and nerfs relative to the total row
+     * power.
+     * @param condition
+     * @param meleeRow
+     * @param rangedRow
+     * @param magicRow
+     * @return total power of a turn
+     */
+    public int calculatePower(Weather condition, ArrayList<TradingCard> meleeRow,
+       ArrayList<TradingCard> rangedRow, ArrayList<TradingCard> magicRow) {
+        int totalPower = 0;
+        int meleePower = calculateRowPower(meleeRow);
+        int rangedPower = calculateRowPower(rangedRow);
+        int magicPower = calculateRowPower(magicRow);
         switch (condition) {
             case CLEAR:         // No change
                 totalPower = meleePower + rangedPower + magicPower; 
                 break;
-            case ECLIPSE:       // Magic * 2, Melee - 5
+            case ECLIPSE:       // Magic * 2, Melee / 1.5
                 totalPower = 
-                    (meleePower - 5) + rangedPower + (magicPower * 2);
+                    (int) (meleePower / 1.5) + rangedPower + (magicPower * 2);
                 break;
-            case FOG:           // Magic - 10
+            case FOG:           // Magic / 2
                 totalPower = 
-                    meleePower + rangedPower + (magicPower - 10);
+                    meleePower + rangedPower + (int) (magicPower / 2);
                 break;
-            case HEATWAVE:      // Melee - 10
+            case HEATWAVE:      // Melee / 2
                 totalPower = 
-                    (meleePower - 10) + rangedPower + magicPower;
+                    (int) (meleePower / 2) + rangedPower + magicPower;
                 break;
-            case NICEBREEZE:    // Melee * 2, Ranged - 5
+            case NICEBREEZE:    // Melee * 2, Ranged / 1.5
                 totalPower = 
-                    (meleePower * 2) + (rangedPower - 5) + magicPower; 
+                    (meleePower * 2) + (int) (rangedPower / 1.5) + magicPower; 
                 break;
-            case RAIN:          // Ranged * 2, Magic - 5
+            case RAIN:          // Ranged * 2, Magic / 1.5
                 totalPower = 
-                    meleePower + (rangedPower * 2) + (magicPower - 5);
+                    meleePower + (rangedPower * 2) + (int) (magicPower / 1.5);
                 break;
-            case WIND:          // Ranged - 10
+            case WIND:          // Ranged / 2
                 totalPower = 
-                    meleePower + (rangedPower - 10) + magicPower;
+                    meleePower + (int) (rangedPower / 2) + magicPower;
                 break;
             default:
                 condition = Weather.CLEAR;
@@ -69,11 +95,16 @@ public class PlayModel {
         return totalPower;
     }
 
-    public int calculateRowPower(TradingCard[] row) {
+    /**
+     * Gets the power from each card in an arrayList and calculates the
+     * cumilative power of all the TradingCards in the row
+     * @param row
+     * @return power of that row of cards
+     */
+    public int calculateRowPower(ArrayList<TradingCard> row) {
         int power = 0;
-        for (int i = 0; i < row.length; ++i) {
-            if(row[i] != null)
-                power += row[i].getPower(); 
+        for (int i = 0; i < row.size(); ++i) {
+            power += row.get(i).getPower();
         }
         return power;
     }
@@ -82,13 +113,8 @@ public class PlayModel {
      * Allocate memory for the arrays, shuffle the decks
      */
     public void initializeGame() {
-        p1MeleeBoard = new TradingCard[BOARD_SIZE];
-        p1RangedBoard = new TradingCard[BOARD_SIZE];
-        p1MagicBoard = new TradingCard[BOARD_SIZE];
+
         p1Hand = new TradingCard[HAND_SIZE];
-        p2MeleeBoard = new TradingCard[BOARD_SIZE];
-        p2RangedBoard = new TradingCard[BOARD_SIZE];
-        p2MagicBoard = new TradingCard[BOARD_SIZE];
         p2Hand = new TradingCard[HAND_SIZE]; 
 
         p1Deck.shuffle();
@@ -96,6 +122,10 @@ public class PlayModel {
 
     }
 
+    /**
+     * Handles the cleanup needed to start a new round, and invokes 
+     * intializeGame on it's first call
+     */
     public void roundStart() {
         // Initialize the board on the first round
         if (!initialized) {
@@ -103,14 +133,12 @@ public class PlayModel {
         }
         // 'Discard the board' by resetting the arrays
         else {
-            for (int i = 0; i < BOARD_SIZE; ++i) {
-                p1MeleeBoard[i] = null;
-                p1RangedBoard[i] = null;
-                p1MagicBoard[i] = null;
-                p2MeleeBoard[i] = null;
-                p2RangedBoard[i] = null;
-                p2MagicBoard[i] = null;
-            }
+            p1MeleeBoard.clear();
+            p1RangedBoard.clear();
+            p1MagicBoard.clear();
+            p2MeleeBoard.clear();
+            p2RangedBoard.clear();
+            p2MagicBoard.clear();
         }
         // Draw cards
         for(int i = 0; i < HAND_SIZE; ++i) {
@@ -118,14 +146,7 @@ public class PlayModel {
             p2Hand[i] = p2Deck.drawCard();
         }
 
-        cpuTracker = HAND_SIZE;
-        resetPower();
-    }
-
-    public TradingCard playCard(int index) {
-        TradingCard tempCard = new TradingCard(p1Hand[index]);
-        p1Hand[index] = null;
-        return tempCard;
+        cpuTracker = 0;
     }
 
     /**
@@ -133,12 +154,12 @@ public class PlayModel {
      * default to playing their top card. Because this game implementation is 
      * more luck based in the current implementation, this will ultimately be
      * trivial.  
-     * @return the "rightmost" card in p2Hand
+     * @return the "leftmost" card in p2Hand
      */
     public TradingCard cpuPlay() {
         TradingCard tempCard = new TradingCard(p2Hand[cpuTracker]);
         p2Hand[cpuTracker] = null;
-        cpuTracker--;
+        cpuTracker++;
         return tempCard;
     }
 
@@ -175,9 +196,16 @@ public class PlayModel {
         } 
     }
 
-    public void resetPower() {
-        p1TotalPower = 0;
-        p2TotalPower = 0;
+    /**
+     * Accessors for neccessary members
+     */
+
+    public TradingCard[] getP1Hand() {
+        return p1Hand;
+    }
+
+    public TradingCard[] getP2Hand() {
+        return p2Hand;
     }
 
     public int getP1Power() {
@@ -194,13 +222,5 @@ public class PlayModel {
 
     public int getP2Score() {
         return p2Score;
-    }
-
-    public TradingCard[] getP1Hand() {
-        return p1Hand;
-    }
-
-    public TradingCard[] getP2Hand() {
-        return p2Hand;
     }
 }
